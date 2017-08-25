@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Shortened URL Service Description</title>
+</head>
+<body>
+<h1>Welcome to Shortened Url Services Site</h1>
+<p>
+<h3>Quick check of redirection link with a browser:</h3>
+<ul>
+    <li>
+        <em>help: -</em> http://[hostname]:8080/help/
+    </li>
+    <li>
+        <em>wrong user: -</em> http://[hostname]:8080/short/ddddd
+    </li>
+    <li>
+        <em>correct user: - </em>http://[hostname]:8080/xYswlE?id=accountid1
+    </li>
+</ul>
+<h2>
+    1. Account Service
+</h2>
+
+<table border="1">
+    <tr>
+        <td>HTTP metod</td>
+        <td>POST</td>
+    </tr>
+
+    <tr>
+        <td>URI</td>
+        <td>/account</td>
+    </tr>
+
+    <tr>
+        <td>Request type</td>
+        <td>application/json</td>
+    </tr>
+
+    <tr>
+        <td>Request Body</td>
+        <td>JSON object with the following parameters:
+            AccountId (String, mandatory)<br/>
+            Example: { AccountId : 'myAccountId'}
+        </td>
+    </tr>
+
+    <tr>
+        <td>Reponse Type</td>
+        <td>application/json</td>
+    </tr>
+
+
+    <tr>
+        <td>Response</td>
+        <td>We distinguish the successful from the unsuccessful registration.<br/>
+            Unsuccessful registration occurs only if the concerned account ID<br/>
+            already exists. The parameters are as follows:<br/>
+            <ul>
+                <li>success: true | false</li>
+                <li>description: Description of status, for example: account with that
+                    ID already exists
+                </li>
+                <li>password: Returns only if the account was successfully created.
+                    Automatically generated password length of 8 alphanumeric
+                    characters
+                </li>
+            </ul>
+            Example {success: 'true', description: 'Your account is opened', password: 'xC345Fc0'}
+        </td>
+    </tr>
+
+</table>
+<h2>
+    2. Registration of URLs
+</h2>
+
+<table border="1">
+    <tr>
+        <td>HTTP metod</td>
+        <td>POST</td>
+    </tr>
+
+    <tr>
+        <td>URI</td>
+        <td>/register</td>
+    </tr>
+
+
+    <tr>
+        <td>Request type</td>
+        <td>application/json</td>
+    </tr>
+    <tr>
+        <td>Request Headers</td>
+        <td>Authorization header with Basic authentication token</td>
+    </tr>
+
+    <tr>
+        <td>Request Body</td>
+        <td>JSON object with the following parameters:
+            <ul>
+                <li>url (mandatory, url that needs shortening)</li>
+                <li>redirectType : 301 | 302 (not mandatory, default 302)</li>
+            </ul>
+            Example: {
+            url: 'http://stackoverflow.com/questions/1567929/website-safe-data-
+            access-architecture-question?rq=1', redirectType : 301
+            }
+        </td>
+    </tr>
+
+    <tr>
+        <td>Reponse Type</td>
+        <td>application/json</td>
+    </tr>
+
+
+    <tr>
+        <td>Response</td>
+        <td>Response parameters in case of successful registration are as follows:.<br/>
+            <ul>
+                <li>shortUrl (shortened URL)</li>
+            </ul>
+            Example: { shortUrl: 'http://short.com/xYswlE'}
+        </td>
+    </tr>
+
+</table>
+<h2>
+    3. Statistic
+</h2>
+
+<table border="1">
+    <tr>
+        <td>HTTP metod</td>
+        <td>GET</td>
+    </tr>
+
+    <tr>
+        <td>URI</td>
+        <td>/statistic/{AccountId}</td>
+    </tr>
+    <tr>
+        <td>Request Headers</td>
+        <td>Authorization header with Basic authentication token</td>
+    </tr>
+
+
+    <tr>
+        <td>Reponse Type</td>
+        <td>application/json</td>
+    </tr>
+
+    <tr>
+        <td>Response</td>
+        <td>JThe server responds with a JSON object, key:value map, where the key is the registered URL, and the value
+            is the number of this URL redirects.<br/>
+            Example:
+            {
+            'http://myweb.com/someverylongurl/thensomedirectory/: 10,<br/>
+            'http://myweb.com/someverylongurl2/thensomedirectory2/: 4,<br/>
+            'http://myweb.com/someverylongurl3/thensomedirectory3/: 91,<br/>
+            }
+        </td>
+    </tr>
+</table>
+
+<pre><code>
+  QUICK START with SHORTENED URL SERVICES
+
+SHORTENED URL SERVICES allow to map one url (long one) to other url (short one), and then, when
+using a short url, Shortened Url Services redirect the call to the mapped url, e.g
+** 0. start servervices -  mvn jetty:run
+** 1. map http://ixkormachev-multi-war-test.blogspot.ru/ TO http://[host]/xYswlE
+** 2. browse http://[host]/xYswlE but it will be displayed http://ixkormachev-multi-war-test.blogspot.ru/
+page.
+** 3. http://[host]/help - to see services description
+** 4. services can be accessed from different hosts, not only from localhost
+
+NB: To map urls it is necessary to register client (accountId), and every redirection is counted and
+goes to statistics of the corresponding client.
+There is Basic Authentication Token header is used when register urls.
+
+USED FRAMEWORKS AND TOOLS:
+** jetty with org.eclipse.jetty.security.JDBCLoginService
+** H2
+** spring data rest
+** spring security
+** spring mock mvc
+
+EXAMPLE SCENARIO
+
+1. Open terminal and switch to this folder, then enter:
+  mvn jetty:run
+
+2. Test Account service
+  Request:
+    curl -X POST -H 'Content-Type: application/json' -d '{ "AccountId" : "myAccountId"}' http://localhost:8080/account
+  Response:
+  {
+  "success" : true,
+  "description" : "Your account is opened",
+  "password" : "E49AgxzY"
+  }
+
+3. Test URL Register service
+  Request:
+    curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Basic YWNjb3VudGlkMToxMjM0NTY3OA=='  -d '{"url": "http://ya.ru","redirectType":301}' http://localhost:8080/register
+  Response:
+  {
+  "shortUrl" : "http://192.168.1.34:8080/xYswlE"
+  }
+
+  Repeat for another url:
+  Request:
+  curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Basic YWNjb3VudGlkMToxMjM0NTY3OA=='  -d '{"url": "http://ixkormachev-multi-war-test.blogspot.ru/","redirectType":301}' http://localhost:8080/register
+  Response:
+  {
+    "shortUrl" : "http://192.168.1.34:8080/QKSGmDbA"
+  }
+
+  4. Test Statistic service
+  Request:
+  curl -v http://localhost:8080/statistic/accountid1
+  Response:
+  {
+  "redirectStatistics" : {
+    "http://ya.ru" : 0,
+    "http://ixkormachev-multi-war-test.blogspot.ru/" : 0
+  }
+  }
+
+  5. Redirect (check with curl and with browser)
+  curl http://localhost:8080//xYswlE
+  curl http://localhost:8080//xYswlE
+
+  6. Statistic
+  Request:
+  curl -v http://localhost:8080/statistic/accountid1
+  Response:
+  {
+  "redirectStatistics" : {
+    "http://ya.ru" : 2,
+    "http://ixkormachev-multi-war-test.blogspot.ru/" : 0
+  }
+  }
+
+  7. Check help page with browser
+  http://localhost:8080/help
+
+
+  NB:
+  1. Repeat all steps, accesing the services from another computer (not server computer)
+  2. Some parts of urls and passwords are random generated values
+  3. accountid1, accountid2, accountid3 are predefined users
+
+  </code></pre>
+</body>
+</html>
