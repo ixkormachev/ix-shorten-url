@@ -1,13 +1,14 @@
 QUICK START with SHORTENED URL SERVICES
 
 SHORTENED URL SERVICES allow to map one url (long one) to other url (short one), and then, when
-using a short url, Shortened Url Services redirect the call to the mapped url, e.g
-** 0. start servervices -  mvn jetty:run
-** 1. map http://ixkormachev-multi-war-test.blogspot.ru/ TO http://[host]/xYswlE
-** 2. browse http://[host]/xYswlE but it will be displayed http://ixkormachev-multi-war-test.blogspot.ru/
+using a short url, Shortened Url Services redirect the call to the mapped url, e.g:
+
+1. start servervices -  mvn jetty:run
+2. map http://ixkormachev-multi-war-test.blogspot.ru/ TO http://[host]/xYswlE
+3. browse http://[host]/xYswlE but it will be displayed http://ixkormachev-multi-war-test.blogspot.ru/
 page.
-** 3. http://[host]/help - to see services description
-** 4. services can be accessed from different hosts, not only from localhost
+4. http://[host]/help - to see services description
+5. services can be accessed from different hosts, not only from localhost
 
 NB: To map urls it is necessary to register client (accountId), and every redirection is counted and
 goes to statistics of the corresponding client.
