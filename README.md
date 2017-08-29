@@ -3,92 +3,28 @@ QUICK START with SHORTENED URL SERVICES
 SHORTENED URL SERVICES allow to map one url (long one) to other url (short one), and then, when
 using a short url, Shortened Url Services redirect the call to the mapped url, e.g:
 
-1. start servervices -  mvn jetty:run
-2. map http://ixkormachev-multi-war-test.blogspot.ru/ TO http://[host]/xYswlE
-3. browse http://[host]/xYswlE but it will be displayed http://ixkormachev-multi-war-test.blogspot.ru/
-page.
-4. http://[host]/help - to see services description
-5. services can be accessed from different hosts, not only from localhost
+1. start servervices -  java -jar target\ix-shorten-url-0.0.1-SNAPSHOT.jar
 
-NB: To map urls it is necessary to register client (accountId), and every redirection is counted and
-goes to statistics of the corresponding client.
-There is Basic Authentication Token header is used when register urls.
+2. try to register already registered default user:
 
-USED FRAMEWORKS AND TOOLS:
-a. jetty with org.eclipse.jetty.security.JDBCLoginService
-b. H2
-c. spring data rest
-d. spring security
-e. spring mock mvc
+curl -H "Content-Type: application/json"  -X POST -d '{"id":null,"email":"test2@test.com","password":"password2","nam
+e":"user2","lastName":"lastName2","active":1,"roles":["ADMIN"]}' http://localhost:8080/register/user
+{
+  "result" : "There is already a user registered with the email provided"
+}
 
-EXAMPLE SCENARIO
+3. try to register a new user
 
-1. Open terminal and switch to this folder, then enter:
-  mvn jetty:run
+curl -H "Content-Type: application/json"  -X POST -d '{"id":null,"email":"test3@test.com","password":"password2","nam
+e":"user2","lastName":"lastName2","active":1,"roles":["ADMIN"]}' http://localhost:8080/register/user
+{
+  "result" : "The user has been registrated"
+}
 
-2. Test Account service
-  Request:
-    curl -X POST -H 'Content-Type: application/json' -d '{ "AccountId" : "myAccountId"}' http://localhost:8080/account
-  Response:
-  {
-  "success" : true,
-  "description" : "Your account is opened",
-  "password" : "E49AgxzY"
-  }
-
-3. Test URL Register service
-  Request:
-    curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Basic YWNjb3VudGlkMToxMjM0NTY3OA=='  -d '{"url": "http://ya.ru","redirectType":301}' http://localhost:8080/register
-  Response:
-  {
-  "shortUrl" : "http://192.168.1.34:8080/xYswlE"
-  }
-  
-  Repeat for another url:
-  Request:
-  curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Basic YWNjb3VudGlkMToxMjM0NTY3OA=='  -d '{"url": "http://ixkormachev-multi-war-test.blogspot.ru","redirectType":301}' http://localhost:8080/register
-  Response:
-  {
-    "shortUrl" : "http://192.168.1.34:8080/QKSGmDbA"
-  }
-  
-  4. Test Statistic service
-  Request:
-  curl -v http://localhost:8080/statistic/accountid1
-  Response:
-  {
-  "redirectStatistics" : {
-    "http://ya.ru" : 0,
-    "http://ixkormachev-multi-war-test.blogspot.ru/" : 0
-  }
-  }
-  
-  5. Redirect (check with curl and with browser)
-  curl http://localhost:8080//xYswlE
-  curl http://localhost:8080//xYswlE
-  
-  6. Statistic
-  Request:
-  curl -v http://localhost:8080/statistic/accountid1
-  Response:
-  {
-  "redirectStatistics" : {
-    "http://ya.ru" : 2,
-    "http://ixkormachev-multi-war-test.blogspot.ru/" : 0
-  }
-  }
-  
-  7. Check help page with browser
-  http://localhost:8080/help
-  
-  
-  NB:
-  1. Repeat all steps, accesing the services from another computer (not server computer)
-  2. Some parts of urls and passwords are random generated values
-  3. accountid1, accountid2, accountid3 are predefined users
-  
-  
-  
-  
-  
+4. add an url and get a shortcut for it
+$ curl -H "Content-Type: application/json" -H "Authorization: Basic dGVzdDJAdGVzdC5jb206cGFzc3dvcmQy" -X POST -d '{"url
+":"http://ya.ru"}' http://localhost:8080/register/url
+{
+  "result" : "[host]:8080/IbiKHAVA"
+}
   
