@@ -15,11 +15,11 @@ goes to statistics of the corresponding client.
 There is Basic Authentication Token header is used when register urls.
 
 USED FRAMEWORKS AND TOOLS:
-** jetty with org.eclipse.jetty.security.JDBCLoginService
-** H2
-** spring data rest
-** spring security
-** spring mock mvc
+a. jetty with org.eclipse.jetty.security.JDBCLoginService
+b. H2
+c. spring data rest
+d. spring security
+e. spring mock mvc
 
 EXAMPLE SCENARIO
 
